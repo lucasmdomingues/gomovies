@@ -2,15 +2,15 @@ package gomovies
 
 import "testing"
 
-const key = ""
+const key = "45ace70e"
 
-func TestGetMovieByTitle(t *testing.T) {
+func TestGetMovie(t *testing.T) {
 
-	movie, err := GetMovieByTitle(key, "Lord of the rings")
+	movie, err := GetMovie(key, "Lord of the rings", "tt0120737")
 	if err != nil {
 		t.Fatal(err)
 		return
 	}
 
-	t.Logf("%#v", movie)
+	t.Logf("%+v", movie)
 }

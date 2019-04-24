@@ -10,9 +10,9 @@ import (
 
 const apiOmdbPrefix = "http://www.omdbapi.com"
 
-func GetMovieByTitle(key, title string) (*Movie, error) {
+func GetMovie(key, title, idMovie string) (*Movie, error) {
 
-	url := fmt.Sprintf("%s/?apikey=%s&t=%s", apiOmdbPrefix, key, strings.Replace(title, " ", "+", len(title)))
+	url := fmt.Sprintf("%s/?apikey=%s&t=%s&i=%s", apiOmdbPrefix, key, strings.Replace(title, " ", "+", len(title)), idMovie)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
