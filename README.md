@@ -21,8 +21,7 @@ func main() {
 
 	movie, err := gomovies.GetMovie(key, "Lord of the rings", "tt0120737")
 	if err != nil {
-        fmt.Println(err)
-        return
+            return nil, err
 	}
 
 	fmt.Println(movie)
