@@ -2,7 +2,7 @@ package gomovies
 
 import "testing"
 
-const key = "45ace70e"
+const key = ""
 
 func TestGetMovie(t *testing.T) {
 
