@@ -2,26 +2,48 @@ package gomovies
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 )
 
-const apiOmdbPrefix = "http://www.omdbapi.com"
+const URL = "http://www.omdbapi.com"
 
-func GetMovie(key, title, idMovie string) (*Movie, error) {
-
-	url := fmt.Sprintf("%s/?apikey=%s&t=%s&i=%s", apiOmdbPrefix, key, strings.Replace(title, " ", "+", len(title)), idMovie)
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
+func SearchByTitle(apiKey, title string) (*Movie, error) {
+	if apiKey == "" {
+		return nil, errors.New("Oops, apiKey cannot be empty")
 	}
 
-	client := &http.Client{}
+	if title == "" {
+		return nil, errors.New("Oops, title cannot be empty")
+	}
 
-	resp, err := client.Do(req)
+	title = strings.ToLower(title)
+	title = strings.Replace(title, " ", "+", len(title))
+
+	url := fmt.Sprintf("%s/?apikey=%s&t=%s", URL, apiKey, title)
+
+	return sendRequest(url)
+}
+
+func SearchByID(apiKey, id string) (*Movie, error) {
+	if apiKey == "" {
+		return nil, errors.New("Oops, apiKey cannot be empty")
+	}
+
+	if id == "" {
+		return nil, errors.New("Oops, id cannot be empty")
+	}
+
+	url := fmt.Sprintf("%s/?apikey=%s&i=%s", URL, apiKey, id)
+
+	return sendRequest(url)
+}
+
+func sendRequest(url string) (*Movie, error) {
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +61,8 @@ func GetMovie(key, title, idMovie string) (*Movie, error) {
 		return nil, err
 	}
 
-	if movie.Response != "True" {
-		return nil, fmt.Errorf("%v", movie.Error)
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Oops, %s", movie.Error)
 	}
 
 	return movie, nil

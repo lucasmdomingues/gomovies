@@ -2,15 +2,20 @@ package gomovies
 
 import "testing"
 
-const key = ""
+const apikey = ""
 
-func TestGetMovie(t *testing.T) {
-
-	movie, err := GetMovie(key, "Lord of the rings", "tt0120737")
+func TestSearchByTitle(t *testing.T) {
+	_, err := SearchByTitle(apikey, "Lord of the rings")
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 		return
 	}
+}
 
-	t.Logf("%+v", movie)
+func TestSearchByID(t *testing.T) {
+	_, err := SearchByID(apikey, "tt0120737")
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }

@@ -1,31 +1,47 @@
-# Instalação
+# Installation
 
 ```go 
 go get github.com/lucasmdomingues/gomovies
 ```
 
-# Exemplos
+# Examples
 
-### Busca por ID ou Título
+### Search by title
 
 ```go
 import (
-	"fmt"
+	"log"
 
 	"github.com/lucasmdomingues/gomovies"
 )
 
 func main() {
+	apiKey := "..."
 
-	key := "KEY"
-
-	movie, err := gomovies.GetMovie(key, "Lord of the rings", "tt0120737")
+	movie, err := gomovies.SearchByTitle(apiKey, "Lord of the rings")
 	if err != nil {
-            return nil, err
+        log.Fatal(err)
 	}
-
-	fmt.Println(movie)
 }
+```
+
+### Search by ID
+
+```go
+import (
+	"log"
+
+	"github.com/lucasmdomingues/gomovies"
+)
+
+func main() {
+	apiKey := "..."
+
+	movie, err := gomovies.SearchByID(apiKey, "tt0120737")
+	if err != nil {
+        log.Fatal(err)
+	}
+} 
 ```
 
 ### Omdb Movies
