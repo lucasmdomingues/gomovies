@@ -11,6 +11,16 @@ import (
 
 const URL = "http://www.omdbapi.com"
 
+type service struct {
+	ApiKey string
+}
+
+type Service interface{}
+
+func NewService() Service {
+	return
+}
+
 func SearchByTitle(apiKey, title string) (*Movie, error) {
 	if apiKey == "" {
 		return nil, errors.New("Oops, apiKey cannot be empty")
@@ -25,7 +35,7 @@ func SearchByTitle(apiKey, title string) (*Movie, error) {
 
 	url := fmt.Sprintf("%s/?apikey=%s&t=%s", URL, apiKey, title)
 
-	return sendRequest(url)
+	return httpGet(url)
 }
 
 func SearchByID(apiKey, id string) (*Movie, error) {
@@ -39,10 +49,10 @@ func SearchByID(apiKey, id string) (*Movie, error) {
 
 	url := fmt.Sprintf("%s/?apikey=%s&i=%s", URL, apiKey, id)
 
-	return sendRequest(url)
+	return httpGet(url)
 }
 
-func sendRequest(url string) (*Movie, error) {
+func httpGet(url string) (*Movie, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
