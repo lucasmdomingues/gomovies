@@ -16,11 +16,11 @@ import (
 )
 
 func main() {
-	apiKey := "..."
+	service := gomovies.NewService("API_KEY")
 
-	movie, err := gomovies.SearchByTitle(apiKey, "Lord of the rings")
+	_, err := service.SearchByTitle("Lord of the rings")
 	if err != nil {
-        log.Fatal(err)
+		log.Fatal(err)
 	}
 }
 ```
@@ -35,11 +35,11 @@ import (
 )
 
 func main() {
-	apiKey := "..."
+	service := gomovies.NewService("API_KEY")
 
-	movie, err := gomovies.SearchByID(apiKey, "tt0120737")
+	_, err := service.SearchByID("tt0120737")
 	if err != nil {
-        log.Fatal(err)
+		log.Fatal(err)
 	}
 } 
 ```

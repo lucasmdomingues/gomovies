@@ -15,17 +15,18 @@ type service struct {
 	ApiKey string
 }
 
-type Service interface{}
-
-func NewService() Service {
-	return
+type Service interface {
+	SearchByTitle(title string) (*Movie, error)
+	SearchByID(id string) (*Movie, error)
 }
 
-func SearchByTitle(apiKey, title string) (*Movie, error) {
-	if apiKey == "" {
-		return nil, errors.New("Oops, apiKey cannot be empty")
+func NewService(apiKey string) Service {
+	return &service{
+		ApiKey: apiKey,
 	}
+}
 
+func (s *service) SearchByTitle(title string) (*Movie, error) {
 	if title == "" {
 		return nil, errors.New("Oops, title cannot be empty")
 	}
@@ -33,21 +34,17 @@ func SearchByTitle(apiKey, title string) (*Movie, error) {
 	title = strings.ToLower(title)
 	title = strings.Replace(title, " ", "+", len(title))
 
-	url := fmt.Sprintf("%s/?apikey=%s&t=%s", URL, apiKey, title)
+	url := fmt.Sprintf("%s/?apikey=%s&t=%s", URL, s.ApiKey, title)
 
 	return httpGet(url)
 }
 
-func SearchByID(apiKey, id string) (*Movie, error) {
-	if apiKey == "" {
-		return nil, errors.New("Oops, apiKey cannot be empty")
-	}
-
+func (s *service) SearchByID(id string) (*Movie, error) {
 	if id == "" {
 		return nil, errors.New("Oops, id cannot be empty")
 	}
 
-	url := fmt.Sprintf("%s/?apikey=%s&i=%s", URL, apiKey, id)
+	url := fmt.Sprintf("%s/?apikey=%s&i=%s", URL, s.ApiKey, id)
 
 	return httpGet(url)
 }
