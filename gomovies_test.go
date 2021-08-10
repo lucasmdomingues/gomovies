@@ -7,7 +7,7 @@ import (
 )
 
 func TestSearchByTitle(t *testing.T) {
-	service := NewService("45ace70e")
+	service := NewService("")
 
 	t.Run("should be able return a movie by title", func(t *testing.T) {
 		_, err := service.SearchByTitle("Lord of the rings")
@@ -21,7 +21,7 @@ func TestSearchByTitle(t *testing.T) {
 }
 
 func TestSearchByID(t *testing.T) {
-	service := NewService("45ace70e")
+	service := NewService("")
 
 	t.Run("should be able return a movie by id", func(t *testing.T) {
 		_, err := service.SearchByID("tt0092675")
