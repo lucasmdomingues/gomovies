@@ -25,11 +25,14 @@ type Movie struct {
 	BoxOffice  string   `json:"BoxOffice"`
 	Production string   `json:"Production"`
 	WebSite    string   `json:"Website"`
-	Response   string   `json:"Response"`
-	Error      string   `json:"Error"`
 }
 
 type Rating struct {
 	Source string `json:"Source"`
 	Value  string `json:"Value"`
+}
+
+type MovieError struct {
+	Response string
+	Error    string
 }

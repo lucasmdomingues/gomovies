@@ -3,16 +3,14 @@ package gomovies
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
+	"net/url"
 )
 
-const URL = "http://www.omdbapi.com"
-
 type service struct {
-	ApiKey string
+	ApiKey  string
+	BaseURL url.URL
 }
 
 type Service interface {
@@ -23,30 +21,43 @@ type Service interface {
 func NewService(apiKey string) Service {
 	return &service{
 		ApiKey: apiKey,
+		BaseURL: url.URL{
+			Scheme: "https",
+			Host:   "www.omdbapi.com",
+		},
 	}
 }
 
 func (s *service) SearchByTitle(title string) (*Movie, error) {
-	if title == "" {
-		return nil, errors.New("Oops, title cannot be empty")
+	url, err := s.BaseURL.Parse("")
+	if err != nil {
+		return nil, err
 	}
 
-	title = strings.ToLower(title)
-	title = strings.Replace(title, " ", "+", len(title))
+	q := url.Query()
 
-	url := fmt.Sprintf("%s/?apikey=%s&t=%s", URL, s.ApiKey, title)
+	q.Add("apikey", s.ApiKey)
+	q.Add("t", title)
 
-	return httpGet(url)
+	url.RawQuery = q.Encode()
+
+	return httpGet(url.String())
 }
 
 func (s *service) SearchByID(id string) (*Movie, error) {
-	if id == "" {
-		return nil, errors.New("Oops, id cannot be empty")
+	url, err := s.BaseURL.Parse("")
+	if err != nil {
+		return nil, err
 	}
 
-	url := fmt.Sprintf("%s/?apikey=%s&i=%s", URL, s.ApiKey, id)
+	q := url.Query()
 
-	return httpGet(url)
+	q.Add("apikey", s.ApiKey)
+	q.Add("i", id)
+
+	url.RawQuery = q.Encode()
+
+	return httpGet(url.String())
 }
 
 func httpGet(url string) (*Movie, error) {
@@ -55,10 +66,21 @@ func httpGet(url string) (*Movie, error) {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var movieError *MovieError
+
+	err = json.Unmarshal(body, &movieError)
+	if err != nil {
+		return nil, err
+	}
+
+	if movieError.Error != "" {
+		return nil, errors.New(movieError.Error)
 	}
 
 	var movie *Movie
@@ -66,10 +88,6 @@ func httpGet(url string) (*Movie, error) {
 	err = json.Unmarshal(body, &movie)
 	if err != nil {
 		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Oops, %s", movie.Error)
 	}
 
 	return movie, nil
